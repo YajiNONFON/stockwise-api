@@ -13,20 +13,123 @@ datasource db {
   
 }
 
-model User {
-  id         String   @id @default(cuid())  // CUID recommandé dans ton PRD
-  email      String   @unique
-  name       String?
-  avatar     String?
-  provider   Provider
-  providerId String
-  createdAt  DateTime @default(now()) @map("created_at")
-  updatedAt  DateTime @updatedAt @map("updated_at")
-
-  @@map("users")
-}
+// ============================================
+// ENUMS
+// ============================================
 
 enum Provider {
   GOOGLE
   FACEBOOK
+}
+
+enum OrderStatus {
+  PENDING
+  DELIVERED
+  CANCELLED
+}
+
+// ============================================
+// USER
+// ============================================
+
+model User {
+  id         String    @id @default(cuid())
+  email      String    @unique
+  name       String?
+  avatar     String?
+  provider   Provider
+  providerId String    @map("provider_id")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+
+  customers  Customer[]
+  products   Product[]
+  orders     Order[]
+
+  @@map("users")
+}
+
+// ============================================
+// CUSTOMER
+// ============================================
+
+model Customer {
+  id        String    @id @default(cuid())
+  userId    String    @map("user_id")
+  name      String?
+  whatsapp  String?
+  notes     String?
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  user   User    @relation(fields: [userId], references: [id])
+  orders Order[]
+
+  @@map("customers")
+}
+
+// ============================================
+// PRODUCT
+// ============================================
+
+model Product {
+  id             String    @id @default(cuid())
+  userId         String    @map("user_id")
+  name           String
+  photo          String?
+  price          Decimal
+  stockTotal     Int       @default(0) @map("stock_total")
+  stockReserved  Int       @default(0) @map("stock_reserved")
+  alertThreshold Int?      @map("alert_threshold")
+  category       String?
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+  deletedAt      DateTime? @map("deleted_at")
+
+  user       User        @relation(fields: [userId], references: [id])
+  orderItems OrderItem[]
+
+  @@map("products")
+}
+
+// ============================================
+// ORDER
+// ============================================
+
+model Order {
+  id          String      @id @default(cuid())
+  orderNumber String      @unique @map("order_number")
+  status      OrderStatus @default(PENDING)
+  total       Decimal
+  note        String?
+  customerId  String      @map("customer_id")
+  userId      String      @map("user_id")
+  createdAt   DateTime    @default(now()) @map("created_at")
+  updatedAt   DateTime    @updatedAt @map("updated_at")
+  deletedAt   DateTime?   @map("deleted_at")
+
+  user       User        @relation(fields: [userId], references: [id])
+  customer   Customer    @relation(fields: [customerId], references: [id])
+  orderItems OrderItem[]
+
+  @@map("orders")
+}
+
+// ============================================
+// ORDER ITEM
+// ============================================
+
+model OrderItem {
+  id        String  @id @default(cuid())
+  quantity  Int
+  unitPrice Decimal @map("unit_price")
+  subtotal  Decimal
+  orderId   String  @map("order_id")
+  productId String  @map("product_id")
+
+  order   Order   @relation(fields: [orderId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+
+  @@map("order_items")
 }

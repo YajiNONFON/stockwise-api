@@ -1,4 +1,4 @@
-import { env } from "./shared/config/env"; // dotenv chargé ici en premier
+import { env } from "./shared/config/env";
 import { app } from "./app";
 import { prisma } from "./infrastructure/database/prisma.cloud";
 import { logger } from "./infrastructure/logger/logger";
@@ -6,10 +6,17 @@ import { logger } from "./infrastructure/logger/logger";
 async function startServer() {
   try {
     await prisma.$connect();
-    logger.info("PostgreSQL connected successfully");
-    console.log("⏰ App is ok");
-    app.listen(env.port, () => {
-      logger.info(`Server is running on http://localhost:${env.port}`);
+    logger.info("✅ PostgreSQL connected successfully");
+
+    const server = app.listen(env.port, () => {
+      logger.info(`🚀 Server running on http://localhost:${env.port}`);
+    });
+
+    // Graceful shutdown
+    process.on("SIGTERM", async () => {
+      logger.info("SIGTERM received — shutting down gracefully");
+      await prisma.$disconnect();
+      server.close(() => process.exit(0));
     });
   } catch (error) {
     logger.error("Failed to connect to PostgreSQL:", error);

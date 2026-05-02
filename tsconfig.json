@@ -46,7 +46,7 @@
 
 {
   "compilerOptions": {
-    "rootDir": "./src",
+    "rootDir": ".",
     "outDir": "./dist",
     "module": "node16",
     "target": "ES2022",
@@ -62,6 +62,6 @@
     "declarationMap": true,
     "typeRoots": ["./node_modules/@types", "./src/types"]
   },
-  "include": ["src"],
+  "include": ["src", "docs"],
   "exclude": ["node_modules"]
 }

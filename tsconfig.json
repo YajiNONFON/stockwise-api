@@ -48,9 +48,9 @@
   "compilerOptions": {
     "rootDir": ".",
     "outDir": "./dist",
-    "module": "node16",
+    "module": "NodeNext",
     "target": "ES2022",
-    "moduleResolution": "node16",
+    "moduleResolution": "NodeNext",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,

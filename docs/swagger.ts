@@ -7,12 +7,12 @@ const options: swaggerJsdoc.Options = {
       title: "Stockwise API",
       version: "1.0.0",
       description:
-        "API de gestion de commandes pour vendeurs WhatsApp en Afrique francophone",
+        "Order and inventory management API for WhatsApp sellers in francophone Africa",
     },
     servers: [
       {
         url: "http://localhost:5000/api/v1",
-        description: "Serveur de développement",
+        description: "Development server",
       },
     ],
     components: {

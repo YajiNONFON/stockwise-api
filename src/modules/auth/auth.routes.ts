@@ -9,18 +9,18 @@ export const authRouter = Router();
  * @swagger
  * tags:
  *   name: Auth
- *   description: Authentification OAuth Google et Facebook
+ *   description: Google and Facebook OAuth authentication
  */
 
 /**
  * @swagger
  * /auth/google:
  *   get:
- *     summary: Connexion via Google
+ *     summary: Sign in with Google
  *     tags: [Auth]
  *     responses:
  *       302:
- *         description: Redirige vers Google OAuth
+ *         description: Redirects to Google OAuth
  */
 authRouter.get(
   "/google",
@@ -34,13 +34,13 @@ authRouter.get(
  * @swagger
  * /auth/google/callback:
  *   get:
- *     summary: Callback Google OAuth
+ *     summary: Google OAuth callback
  *     tags: [Auth]
  *     responses:
  *       200:
- *         description: Authentification réussie — retourne user + tokens
+ *         description: Authentication successful — returns user + tokens
  *       401:
- *         description: Authentification échouée
+ *         description: Authentication failed
  */
 authRouter.get(
   "/google/callback",
@@ -57,11 +57,11 @@ authRouter.get(
  * @swagger
  * /auth/facebook:
  *   get:
- *     summary: Connexion via Facebook
+ *     summary: Sign in with Facebook
  *     tags: [Auth]
  *     responses:
  *       302:
- *         description: Redirige vers Facebook OAuth
+ *         description: Redirects to Facebook OAuth
  */
 authRouter.get(
   "/facebook",
@@ -75,13 +75,13 @@ authRouter.get(
  * @swagger
  * /auth/facebook/callback:
  *   get:
- *     summary: Callback Facebook OAuth
+ *     summary: Facebook OAuth callback
  *     tags: [Auth]
  *     responses:
  *       200:
- *         description: Authentification réussie — retourne user + tokens
+ *         description: Authentication successful — returns user + tokens
  *       401:
- *         description: Authentification échouée
+ *         description: Authentication failed
  */
 authRouter.get(
   "/facebook/callback",
@@ -98,7 +98,7 @@ authRouter.get(
  * @swagger
  * /auth/refresh:
  *   post:
- *     summary: Obtenir un nouvel access token
+ *     summary: Get a new access token
  *     tags: [Auth]
  *     requestBody:
  *       required: true
@@ -111,11 +111,20 @@ authRouter.get(
  *             properties:
  *               refreshToken:
  *                 type: string
+ *                 example: "a1b2c3d4e5f6..."
  *     responses:
  *       200:
- *         description: Nouvel access token généré
+ *         description: New access token generated
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 accessToken:
+ *                   type: string
+ *                   example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
  *       401:
- *         description: Refresh token invalide ou expiré
+ *         description: Invalid or expired refresh token
  */
 authRouter.post("/refresh", authController.refreshToken);
 
@@ -123,7 +132,7 @@ authRouter.post("/refresh", authController.refreshToken);
  * @swagger
  * /auth/logout:
  *   post:
- *     summary: Déconnexion
+ *     summary: Logout
  *     tags: [Auth]
  *     security:
  *       - bearerAuth: []
@@ -138,11 +147,12 @@ authRouter.post("/refresh", authController.refreshToken);
  *             properties:
  *               refreshToken:
  *                 type: string
+ *                 example: "a1b2c3d4e5f6..."
  *     responses:
  *       200:
- *         description: Déconnexion réussie
+ *         description: Logged out successfully
  *       401:
- *         description: Non autorisé
+ *         description: Unauthorized
  */
 authRouter.post("/logout", authMiddleware, authController.logout);
 
@@ -150,11 +160,11 @@ authRouter.post("/logout", authMiddleware, authController.logout);
  * @swagger
  * /auth/failed:
  *   get:
- *     summary: Échec d'authentification OAuth
+ *     summary: OAuth authentication failed
  *     tags: [Auth]
  *     responses:
  *       401:
- *         description: Authentification échouée
+ *         description: Authentication failed
  */
 authRouter.get("/failed", (req, res) => {
   res.status(401).json({ message: "OAuth authentication failed" });

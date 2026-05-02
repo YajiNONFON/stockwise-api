@@ -39,15 +39,34 @@ model User {
   avatar     String?
   provider   Provider
   providerId String    @map("provider_id")
+  acceptTerms Boolean   @map("accept_terms") @default(true)
+
   createdAt  DateTime  @default(now()) @map("created_at")
   updatedAt  DateTime  @updatedAt @map("updated_at")
 
   customers  Customer[]
   products   Product[]
   orders     Order[]
+  refreshTokens RefreshToken[]
+
 
   @@map("users")
 }
+
+model RefreshToken {
+  id        String    @id @default(cuid())
+  userId    String   @map("user_id")
+  token     String   @unique
+  expiresAt DateTime @map("expires_at")
+  createdAt DateTime @default(now()) @map("created_at")
+  revokedAt DateTime? @map("revoked_at")
+
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@map("refresh_tokens")
+}
+
 
 // ============================================
 // CUSTOMER

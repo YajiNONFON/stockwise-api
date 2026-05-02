@@ -2,6 +2,7 @@ import { JwtPayload } from "../../modules/auth/auth.types";
 
 declare global {
   namespace Express {
+    interface User extends JwtPayload {}
     interface Request {
       user?: JwtPayload;
     }

@@ -60,7 +60,7 @@
     "sourceMap": true,
     "declaration": true,
     "declarationMap": true,
-    "typeRoots": ["./node_modules/@types", "./src/types"]
+    "typeRoots": ["./node_modules/@types", "./src/shared/types"]
   },
   "include": ["src", "docs"],
   "exclude": ["node_modules"]

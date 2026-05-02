@@ -11,6 +11,10 @@ const options: swaggerJsdoc.Options = {
     },
     servers: [
       {
+        url: "https://stockwiseapi.onrender.com/api/v1",
+        description: "Production server",
+      },
+      {
         url: "http://localhost:5000/api/v1",
         description: "Development server",
       },

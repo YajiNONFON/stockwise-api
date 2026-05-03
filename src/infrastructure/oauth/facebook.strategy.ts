@@ -20,7 +20,7 @@ passport.use(
           name: profile.displayName,
           avatar: profile.photos?.[0]?.value,
         });
-        done(null, result);
+        done(null, result as any);
       } catch (error) {
         done(error as Error);
       }

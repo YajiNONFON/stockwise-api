@@ -26,6 +26,9 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// ─── Passport ────────────────────────────────────────────────────────────────
+app.use(passport.initialize());
+
 // ─── Swagger UI ───────────────────────────────────────────────────────────────
 app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 

@@ -1,5 +1,5 @@
 import passport from "passport";
-import { Strategy as FacebookStrategy } from "passport-google-oauth20";
+import { Strategy as FacebookStrategy } from "passport-facebook";
 import { env } from "../../shared/config/env";
 import { authService } from "../../modules/auth/auth.service";
 
@@ -8,7 +8,7 @@ passport.use(
     {
       clientID: env.facebookAppId,
       clientSecret: env.facebookAppSecret,
-      callbackURL: "/auth/facebook/callback",
+      callbackURL: "/api/v1/auth/facebook/callback",
     },
 
     async (accessToken, refreshToken, profile, done) => {

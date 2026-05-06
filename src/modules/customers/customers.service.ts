@@ -42,7 +42,11 @@ export const customerService = {
   async updateCustomer(id: string, userId: string, data: UpdateCustomerInput) {
     const customer = await this.findOrFail(id, userId);
 
-    const updatedCustomer = await customerRepository.updateCustomer(id, data);
+    const updatedCustomer = await customerRepository.updateCustomer(
+      id,
+      userId,
+      data,
+    );
 
     return updatedCustomer;
   },

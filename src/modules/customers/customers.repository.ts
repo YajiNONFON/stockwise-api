@@ -53,16 +53,16 @@ export const customerRepository = {
     });
   },
 
-  async updateCustomer(id: string, data: UpdateCustomerInput) {
+  async updateCustomer(id: string, userId: string, data: UpdateCustomerInput) {
     return prisma.customer.update({
-      where: { id },
+      where: { id, userId },
       data,
     });
   },
 
   async deleteCustomer(id: string, userId: string) {
     return prisma.customer.update({
-      where: { id, userId },
+      where: { id, userId, deletedAt: null },
       data: { deletedAt: new Date() },
     });
   },

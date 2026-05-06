@@ -56,23 +56,28 @@ export const productRepository = {
     });
   },
 
-  async updateProduct(id: string, data: UpdateProductInput) {
+  async updateProduct(id: string, userId: string, data: UpdateProductInput) {
     return prisma.product.update({
-      where: { id },
+      where: { id, userId },
       data,
     });
   },
 
-  async updateStock(id: string, stockTotal: number, stockReserved: number) {
+  async updateStock(
+    id: string,
+    userId: string,
+    stockTotal: number,
+    stockReserved: number,
+  ) {
     return prisma.product.update({
-      where: { id },
+      where: { id, userId },
       data: { stockTotal, stockReserved },
     });
   },
 
   async deleteProduct(id: string, userId: string) {
     return prisma.product.update({
-      where: { id, userId },
+      where: { id, userId, deletedAt: null },
       data: { deletedAt: new Date() },
     });
   },

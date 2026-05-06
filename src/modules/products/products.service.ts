@@ -42,7 +42,11 @@ export const productService = {
   async updateProduct(id: string, userId: string, data: UpdateProductInput) {
     const product = await this.findOrFail(id, userId);
 
-    const updatedProduct = await productRepository.updateProduct(id, data);
+    const updatedProduct = await productRepository.updateProduct(
+      id,
+      userId,
+      data,
+    );
 
     return updatedProduct;
   },

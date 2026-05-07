@@ -65,13 +65,19 @@ export const productRepository = {
 
   async updateStock(
     id: string,
-    userId: string,
-    stockTotal: number,
-    stockReserved: number,
+    stockTotalDelta?: number,
+    stockReservedDelta?: number,
   ) {
     return prisma.product.update({
-      where: { id, userId },
-      data: { stockTotal, stockReserved },
+      where: { id },
+      data: {
+        ...(stockTotalDelta !== undefined && {
+          stockTotal: { increment: stockTotalDelta },
+        }),
+        ...(stockReservedDelta !== undefined && {
+          stockReserved: { increment: stockReservedDelta },
+        }),
+      },
     });
   },
 

@@ -5,6 +5,7 @@ import { customerRouter } from "./modules/customers/customers.routes";
 import { productRouter } from "./modules/products/products.routes";
 import { orderRouter } from "./modules/orders/orders.routes";
 import { dashboardRouter } from "./modules/dashboard/dashboard.routes";
+import { reportRouter } from "./modules/reports/reports.routes";
 
 const router = Router();
 
@@ -14,5 +15,6 @@ router.use("/customers", customerRouter);
 router.use("/products", productRouter);
 router.use("/orders", orderRouter);
 router.use("/dashboard", dashboardRouter);
+router.use("/reports", reportRouter);
 
 export default router;

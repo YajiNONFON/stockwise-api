@@ -29,6 +29,17 @@ app.use(express.urlencoded({ extended: true }));
 // ─── Passport ────────────────────────────────────────────────────────────────
 app.use(passport.initialize());
 
+app.set("json replacer", (key: string, value: unknown) => {
+  if (
+    value !== null &&
+    typeof value === "object" &&
+    value.constructor?.name === "Decimal"
+  ) {
+    return Number(value);
+  }
+  return value;
+});
+
 // ─── Swagger UI ───────────────────────────────────────────────────────────────
 app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 

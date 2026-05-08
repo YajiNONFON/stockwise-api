@@ -1,6 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import { CreateProductInput, UpdateProductInput } from "./products.dto";
 import { productService } from "./products.service";
+import { BadRequestException } from "../../shared/errors/http-errors";
+import { uploadToCloudinary } from "../../infrastructure/cloudinary/upload.service";
 
 export const productController = {
   async createProduct(req: Request, res: Response, next: NextFunction) {
@@ -57,6 +59,32 @@ export const productController = {
       const product = await productService.updateProduct(id, userId, data);
 
       res.status(200).json(product);
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  async uploadPhoto(req: Request, res: Response, next: NextFunction) {
+    try {
+      const userId = req.user!.userId;
+      const { id } = req.params as { id: string };
+      const file = req.file;
+
+      if (!file) {
+        throw new BadRequestException("No file uploaded");
+      }
+
+      const photoUrl = await uploadToCloudinary(
+        file.buffer,
+        "stockwise-api/products",
+        `product-${id}-${Date.now()}`,
+      );
+
+      const product = await productService.updateProduct(id, userId, {
+        photo: photoUrl,
+      });
+
+      res.status(200).json({ product });
     } catch (error) {
       next(error);
     }

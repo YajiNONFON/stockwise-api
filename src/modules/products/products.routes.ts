@@ -3,6 +3,7 @@ import { authMiddleware } from "../../shared/middlewares/auth.middleware";
 import { validate } from "../../shared/middlewares/validate.middleware";
 import { CreateProductDto, UpdateProductDto } from "./products.dto";
 import { productController } from "./products.controller";
+import { upload } from "../../shared/middlewares/upload.middleware";
 
 export const productRouter = Router();
 
@@ -209,3 +210,51 @@ productRouter.patch(
  *         description: Product not found
  */
 productRouter.delete("/:id", authMiddleware, productController.deleteProduct);
+
+/**
+ * @swagger
+ * /products/{id}/photo:
+ *   post:
+ *     summary: Upload a product photo
+ *     tags: [Products]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               photo:
+ *                 type: string
+ *                 format: binary
+ *     responses:
+ *       200:
+ *         description: Photo uploaded successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 product:
+ *                   type: object
+ *       400:
+ *         description: No file uploaded or invalid format
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Product not found
+ */
+productRouter.post(
+  "/:id/photo",
+  authMiddleware,
+  upload.single("photo"),
+  productController.uploadPhoto,
+);

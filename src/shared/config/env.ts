@@ -8,6 +8,9 @@ const requiredEnvVars = [
   "GOOGLE_CLIENT_SECRET",
   "FACEBOOK_APP_ID",
   "FACEBOOK_APP_SECRET",
+  "CLOUDINARY_CLOUD_NAME",
+  "CLOUDINARY_API_KEY",
+  "CLOUDINARY_API_SECRET",
 ] as const;
 
 //const requiredEnvVars = ["DATABASE_URL"] as const;
@@ -28,4 +31,7 @@ export const env = {
   googleClientSecret: process.env.GOOGLE_CLIENT_SECRET!,
   facebookAppId: process.env.FACEBOOK_APP_ID!,
   facebookAppSecret: process.env.FACEBOOK_APP_SECRET!,
+  cloudinary_cloud_name: process.env.CLOUDINARY_CLOUD_NAME!,
+  cloudinary_api_key: process.env.CLOUDINARY_API_KEY!,
+  cloudinary_api_secret: process.env.CLOUDINARY_API_SECRET!,
 };

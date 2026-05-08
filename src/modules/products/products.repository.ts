@@ -16,29 +16,24 @@ export const productRepository = {
   ) {
     const skip = (page - 1) * limit;
 
-    const [data, total] = await prisma.$transaction([
+    const where = {
+      userId,
+      deletedAt: null,
+      ...(search && {
+        OR: [{ name: { contains: search, mode: "insensitive" as const } }],
+      }),
+    };
+
+    const [data, total] = await Promise.all([
       prisma.product.findMany({
-        where: {
-          userId,
-          deletedAt: null,
-          ...(search && {
-            OR: [{ name: { contains: search, mode: "insensitive" } }],
-          }),
-        },
+        where,
         skip,
         take: limit,
         orderBy: { createdAt: "desc" },
       }),
-      prisma.product.count({
-        where: {
-          userId,
-          deletedAt: null,
-          ...(search && {
-            OR: [{ name: { contains: search, mode: "insensitive" } }],
-          }),
-        },
-      }),
+      prisma.product.count({ where }),
     ]);
+
     return { data, total };
   },
 

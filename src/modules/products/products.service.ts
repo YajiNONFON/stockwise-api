@@ -1,6 +1,14 @@
+import { Product } from "../../../generated/prisma/client";
 import { NotFoundException } from "../../shared/errors/http-errors";
 import { CreateProductInput, UpdateProductInput } from "./products.dto";
 import { productRepository } from "./products.repository";
+
+function withStockAvailable(product: Product) {
+  return {
+    ...product,
+    stockAvailable: product.stockTotal - product.stockReserved,
+  };
+}
 
 export const productService = {
   async findOrFail(id: string, userId: string) {
@@ -16,7 +24,7 @@ export const productService = {
   async createProduct(userId: string, data: CreateProductInput) {
     const product = await productRepository.createProduct(userId, data);
 
-    return product;
+    return withStockAvailable(product);
   },
 
   async getAllProducts(
@@ -25,18 +33,23 @@ export const productService = {
     limit: number,
     search?: string,
   ) {
-    const products = await productRepository.getAllProducts(
+    const { data, total } = await productRepository.getAllProducts(
       userId,
       page,
       limit,
       search,
     );
 
-    return products;
+    return {
+      data: data.map(withStockAvailable),
+      total,
+    };
   },
 
   async getProductById(id: string, userId: string) {
-    return this.findOrFail(id, userId);
+    const product = await this.findOrFail(id, userId);
+
+    return withStockAvailable(product);
   },
 
   async updateProduct(id: string, userId: string, data: UpdateProductInput) {
@@ -48,7 +61,7 @@ export const productService = {
       data,
     );
 
-    return updatedProduct;
+    return withStockAvailable(updatedProduct);
   },
 
   async deleteProduct(id: string, userId: string) {

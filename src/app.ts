@@ -9,14 +9,16 @@ import { errorMiddleware } from "./shared/middlewares/error.middleware";
 
 export const app = express();
 
-// ─── Importer les strategies pour les enregistrer ────────────────────────────
+// ─── Import strategies ────────────────────────────
 import "./infrastructure/oauth/google.strategy";
 import "./infrastructure/oauth/facebook.strategy";
 import router from "./routes";
 import { healthCheck } from "./infrastructure/monitoring/health";
+import { rateLimitMiddleware } from "./shared/middlewares/rate-limit.middleware";
 
 // ─── Security ────────────────────────────────────────────────────────────────
 app.use(helmet());
+app.use(rateLimitMiddleware);
 app.use(
   cors({
     origin: process.env.FRONTEND_URL || "http://localhost:3000",

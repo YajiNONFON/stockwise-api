@@ -4,6 +4,7 @@ import passport from "passport";
 import swaggerUi from "swagger-ui-express";
 import { swaggerSpec } from "../docs/swagger";
 import helmet from "helmet";
+import * as Sentry from "@sentry/node";
 import { errorMiddleware } from "./shared/middlewares/error.middleware";
 
 export const app = express();
@@ -12,6 +13,7 @@ export const app = express();
 import "./infrastructure/oauth/google.strategy";
 import "./infrastructure/oauth/facebook.strategy";
 import router from "./routes";
+import { healthCheck } from "./infrastructure/monitoring/health";
 
 // ─── Security ────────────────────────────────────────────────────────────────
 app.use(helmet());
@@ -47,9 +49,10 @@ app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 app.use("/api/v1", router);
 
 // ─── Health Check ────────────────────────────────────────────────────────────
-app.get("/health", (req, res) => {
-  res.status(200).json({ status: "ok", timestamp: new Date().toISOString() });
-});
+app.get("/health", healthCheck);
 
-// ─── Error Handler (toujours en dernier) ─────────────────────────────────────
+// ─── Sentry Error Handler ────────────────────────────
+Sentry.setupExpressErrorHandler(app);
+
+// ─── Error Handler ─────────────────────────────────────
 app.use(errorMiddleware);

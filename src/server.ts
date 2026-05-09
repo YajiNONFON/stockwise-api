@@ -2,6 +2,7 @@ import { env } from "./shared/config/env";
 import { app } from "./app";
 import { prisma } from "./infrastructure/database/prisma.cloud";
 import { logger } from "./infrastructure/logger/logger";
+import { startKeepAliveCron } from "./infrastructure/cron/health.cron";
 
 async function startServer() {
   try {
@@ -10,6 +11,8 @@ async function startServer() {
 
     const server = app.listen(env.port, () => {
       logger.info(`🚀 Server running on http://localhost:${env.port}`);
+
+      startKeepAliveCron();
     });
 
     // Graceful shutdown

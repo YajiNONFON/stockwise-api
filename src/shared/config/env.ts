@@ -11,6 +11,8 @@ const requiredEnvVars = [
   "CLOUDINARY_CLOUD_NAME",
   "CLOUDINARY_API_KEY",
   "CLOUDINARY_API_SECRET",
+  "SENTRY_DSN",
+  "RENDER_EXTERNAL_URL",
 ] as const;
 
 //const requiredEnvVars = ["DATABASE_URL"] as const;
@@ -34,4 +36,6 @@ export const env = {
   cloudinary_cloud_name: process.env.CLOUDINARY_CLOUD_NAME!,
   cloudinary_api_key: process.env.CLOUDINARY_API_KEY!,
   cloudinary_api_secret: process.env.CLOUDINARY_API_SECRET!,
+  sentry_dns: process.env.SENTRY_DSN!,
+  render_external_url: process.env.RENDER_EXTERNAL_URL!,
 };

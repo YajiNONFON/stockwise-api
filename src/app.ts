@@ -4,6 +4,7 @@ import passport from "passport";
 import swaggerUi from "swagger-ui-express";
 import { swaggerSpec } from "../docs/swagger";
 import helmet from "helmet";
+import cookieParser from "cookie-parser";
 import * as Sentry from "@sentry/node";
 import { errorMiddleware } from "./shared/middlewares/error.middleware";
 
@@ -29,7 +30,7 @@ app.use(
 // ─── Body Parsing ────────────────────────────────────────────────────────────
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
+app.use(cookieParser());
 // ─── Passport ────────────────────────────────────────────────────────────────
 app.use(passport.initialize());
 

@@ -48,6 +48,5 @@ export const authController = {
       `${clientUrl}/auth/callback?accessToken=${result.tokens.accessToken}`,
     );
 
-    res.status(200).json(result);
   },
 };

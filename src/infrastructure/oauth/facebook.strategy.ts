@@ -8,7 +8,7 @@ passport.use(
     {
       clientID: env.facebookAppId,
       clientSecret: env.facebookAppSecret,
-      callbackURL: "/api/v1/auth/facebook/callback",
+      callbackURL: `${process.env.BACKEND_URL}/api/v1/auth/facebook/callback`,
     },
 
     async (accessToken, refreshToken, profile, done) => {

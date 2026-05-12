@@ -6,32 +6,19 @@ import { UnauthorizedException } from "../../shared/errors/http-errors";
 
 export const authService = {
   async handleOAuthCallback(profile: OAuthProfile): Promise<AuthResponse> {
-
-    // ── LOG TEMPORAIRE ─────────────────────────────────────
-    console.log('=== OAuth Callback ===')
-    console.log('Provider:', profile.provider)
-    console.log('ProviderId:', profile.providerId)
-    console.log('Email:', profile.email)
-    // ──────────────────────────────────────────────────────
+    if (!profile?.provider || !profile?.providerId || !profile?.email) {
+      throw new UnauthorizedException(
+        "Invalid OAuth profile — missing required fields",
+      );
+    }
 
     let user = await authRepository.findUserByProvider(
       profile.provider,
       profile.providerId,
     );
 
-    console.log('User trouvé par provider:', user?.id, user?.email)
-
     if (!user) {
-      try {
-        user = await authRepository.createUserFromOAuth(profile)
-        console.log('Nouveau user créé:', user.id, user.email)
-      } catch (error) {
-        console.error('Erreur création user:', error)
-        // ── Si email déjà pris → récupère le user existant
-        user = await authRepository.findUserByEmail(profile.email)
-        console.log('User récupéré par email:', user?.id, user?.email)
-        if (!user) throw error
-      }
+      user = await authRepository.createUserFromOAuth(profile);
     }
 
     const accessToken = tokenGenerator.generateAccessToken({

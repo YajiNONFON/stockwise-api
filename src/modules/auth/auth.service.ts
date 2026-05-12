@@ -22,7 +22,16 @@ export const authService = {
     console.log('User trouvé par provider:', user?.id, user?.email)
 
     if (!user) {
-      user = await authRepository.createUserFromOAuth(profile);
+      try {
+        user = await authRepository.createUserFromOAuth(profile)
+        console.log('Nouveau user créé:', user.id, user.email)
+      } catch (error) {
+        console.error('Erreur création user:', error)
+        // ── Si email déjà pris → récupère le user existant
+        user = await authRepository.findUserByEmail(profile.email)
+        console.log('User récupéré par email:', user?.id, user?.email)
+        if (!user) throw error
+      }
     }
 
     const accessToken = tokenGenerator.generateAccessToken({

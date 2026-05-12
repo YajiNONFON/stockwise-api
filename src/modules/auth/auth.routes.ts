@@ -169,3 +169,18 @@ authRouter.post("/logout", authMiddleware, authController.logout);
 authRouter.get("/failed", (req, res) => {
   res.status(401).json({ message: "OAuth authentication failed" });
 });
+
+// auth.routes.ts — temporaire
+authRouter.get('/debug/users', async (req, res) => {
+  const { prisma } = await import('../../infrastructure/database/prisma.cloud')
+  const users = await prisma.user.findMany({
+    select: {
+      id: true,
+      email: true,
+      name: true,
+      provider: true,
+      providerId: true,
+    },
+  })
+  res.json(users)
+})

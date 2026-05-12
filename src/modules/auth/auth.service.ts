@@ -6,10 +6,20 @@ import { UnauthorizedException } from "../../shared/errors/http-errors";
 
 export const authService = {
   async handleOAuthCallback(profile: OAuthProfile): Promise<AuthResponse> {
+
+    // ── LOG TEMPORAIRE ─────────────────────────────────────
+    console.log('=== OAuth Callback ===')
+    console.log('Provider:', profile.provider)
+    console.log('ProviderId:', profile.providerId)
+    console.log('Email:', profile.email)
+    // ──────────────────────────────────────────────────────
+
     let user = await authRepository.findUserByProvider(
       profile.provider,
       profile.providerId,
     );
+
+    console.log('User trouvé par provider:', user?.id, user?.email)
 
     if (!user) {
       user = await authRepository.createUserFromOAuth(profile);

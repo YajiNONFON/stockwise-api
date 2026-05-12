@@ -5,6 +5,7 @@ import { CreateOrderInput, UpdateOrderInput } from "./orders.dto";
 const customerSelect = {
   id: true,
   name: true,
+  whatsapp: true,
 };
 
 export const orderRepository = {
@@ -51,6 +52,7 @@ export const orderRepository = {
         orderBy: { createdAt: "desc" },
         include: {
           customer: { select: customerSelect },
+          _count: { select: { orderItems: true } },
         },
       }),
       prisma.order.count({ where }),

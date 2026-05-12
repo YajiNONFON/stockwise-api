@@ -36,16 +36,13 @@ export const authController = {
   },
 
   async handleOAuthSuccess(req: Request, res: Response): Promise<void> {
-    const user = req.user as any;
+    const result = req.user as any;
 
-    // ── Guard — si Passport ne retourne pas de profil ────
-    if (!user) {
+    if (!result?.tokens?.accessToken) {
       const clientUrl = process.env.FRONTEND_URL || "http://localhost:3000";
       res.redirect(`${clientUrl}/login?error=auth_failed`);
       return;
     }
-
-    const result = await authService.handleOAuthCallback(user);
 
     res.cookie(
       "refreshToken",

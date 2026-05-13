@@ -93,12 +93,13 @@ export const dashboardRepository = {
       items.map(async (item) => {
         const product = await prisma.product.findUnique({
           where: { id: item.productId },
-          select: { name: true },
+          select: { name: true, category: true },
         });
 
         return {
           productId: item.productId,
           productName: product?.name ?? "Unknown",
+          category: product?.category ?? null,
           totalQuantity: item._sum.quantity ?? 0,
           totalRevenue: Number(item._sum.subtotal ?? 0),
         };

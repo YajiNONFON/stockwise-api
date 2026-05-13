@@ -14,6 +14,7 @@ export interface OrderStats {
 export interface TopProduct {
   productId: string;
   productName: string;
+  category: string | null;
   totalQuantity: number;
   totalRevenue: number;
 }

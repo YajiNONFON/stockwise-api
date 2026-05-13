@@ -14,12 +14,11 @@ type OrderForReport = {
   }[];
 };
 
-// Formate un montant en FCFA sans séparateur décimal problématique
-const formatFCFA = (amount: number): string => {
-  return `${Math.round(amount).toLocaleString("fr-FR")} FCFA`;
-};
+// ─── Helpers ───────────────────────────────────────────────────────────────
 
-// Traduit le statut en français
+const formatFCFA = (amount: number): string =>
+  `${Math.round(amount).toLocaleString("fr-FR")} FCFA`;
+
 const translateStatus = (status: string): string => {
   const map: Record<string, string> = {
     PENDING: "EN ATTENTE",
@@ -28,6 +27,11 @@ const translateStatus = (status: string): string => {
   };
   return map[status] ?? status;
 };
+
+const formatDate = (date: Date): string =>
+  new Date(date).toLocaleDateString("fr-FR");
+
+// ─── Service ───────────────────────────────────────────────────────────────
 
 export const pdfService = {
   async generateOrderReport(orders: OrderForReport[]): Promise<Buffer> {
@@ -39,7 +43,7 @@ export const pdfService = {
       doc.on("end", () => resolve(Buffer.concat(chunks)));
       doc.on("error", reject);
 
-      // ─── Header ────────────────────────────────────────────────
+      // ─── En-tête ──────────────────────────────────────────────
       doc
         .fontSize(20)
         .font("Helvetica-Bold")
@@ -48,40 +52,34 @@ export const pdfService = {
       doc
         .fontSize(10)
         .font("Helvetica")
-        .text(`Généré le : ${new Date().toLocaleDateString("fr-FR")}`, {
-          align: "center",
-        });
+        .text(`Généré le : ${formatDate(new Date())}`, { align: "center" });
 
       doc.moveDown(2);
 
-      // ─── Résumé ────────────────────────────────────────────────
+      // ─── Résumé ───────────────────────────────────────────────
       const delivered = orders.filter((o) => o.status === "DELIVERED");
       const pending = orders.filter((o) => o.status === "PENDING");
       const cancelled = orders.filter((o) => o.status === "CANCELLED");
-
       const totalRevenue = delivered.reduce((sum, o) => sum + o.total, 0);
       const totalPotential = pending.reduce((sum, o) => sum + o.total, 0);
+      const total = delivered.length + cancelled.length;
       const conversionRate =
-        delivered.length + cancelled.length > 0
-          ? Math.round(
-              (delivered.length / (delivered.length + cancelled.length)) * 100,
-            )
-          : 0;
+        total > 0 ? Math.round((delivered.length / total) * 100) : 0;
 
       doc.fontSize(12).font("Helvetica-Bold").text("Résumé");
       doc.moveDown(0.5);
 
-      const summary = [
-        [`Nombre total de commandes`, `${orders.length}`],
-        [`Commandes livrées`, `${delivered.length}`],
-        [`Commandes en attente`, `${pending.length}`],
-        [`Commandes annulées`, `${cancelled.length}`],
-        [`Taux de conversion`, `${conversionRate}%`],
-        [`Chiffre d'affaires réel`, formatFCFA(totalRevenue)],
-        [`Chiffre d'affaires potentiel`, formatFCFA(totalPotential)],
+      const summaryLines: [string, string][] = [
+        ["Nombre total de commandes", String(orders.length)],
+        ["Commandes livrées", String(delivered.length)],
+        ["Commandes en attente", String(pending.length)],
+        ["Commandes annulées", String(cancelled.length)],
+        ["Taux de conversion", `${conversionRate}%`],
+        ["Chiffre d'affaires réel", formatFCFA(totalRevenue)],
+        ["Chiffre d'affaires potentiel", formatFCFA(totalPotential)],
       ];
 
-      summary.forEach(([label, value]) => {
+      summaryLines.forEach(([label, value]) => {
         doc
           .fontSize(10)
           .font("Helvetica-Bold")
@@ -92,34 +90,43 @@ export const pdfService = {
 
       doc.moveDown(2);
 
-      // ─── Commandes ─────────────────────────────────────────────
+      // ─── Détail des commandes ─────────────────────────────────
       doc.fontSize(12).font("Helvetica-Bold").text("Détail des commandes");
       doc.moveDown(1);
 
       orders.forEach((order, index) => {
+        const clientName = order.customer.name ?? "Inconnu";
+        const clientPhone = order.customer.whatsapp
+          ? ` (${order.customer.whatsapp})`
+          : "";
+
         // En-tête commande
         doc
           .fontSize(11)
           .font("Helvetica-Bold")
           .text(
-            `${index + 1}. ${order.orderNumber} — ${translateStatus(order.status)} — ${new Date(order.createdAt).toLocaleDateString("fr-FR")}`,
+            `${index + 1}. ${order.orderNumber} — ${translateStatus(order.status)} — ${formatDate(order.createdAt)}`,
           );
 
         doc
           .fontSize(10)
           .font("Helvetica")
-          .text(
-            `Client : ${order.customer.name ?? "Inconnu"}${order.customer.whatsapp ? ` (${order.customer.whatsapp})` : ""}`,
-          );
+          .text(`Client : ${clientName}${clientPhone}`);
 
         doc.moveDown(0.5);
 
         // Lignes produits
         order.orderItems.forEach((item) => {
+          const name = item.product?.name ?? "Produit inconnu";
+          const qty = item.quantity;
+          const unitPrice = formatFCFA(Number(item.unitPrice));
+          const subtotal = formatFCFA(Number(item.subtotal));
+
           doc
             .fontSize(9)
+            .font("Helvetica")
             .text(
-              `  • ${item.product.name} × ${item.quantity} — ${formatFCFA(Number(item.unitPrice))} l'unité — Sous-total : ${formatFCFA(Number(item.subtotal))}`,
+              `  • ${name} × ${qty} — ${unitPrice} l'unité — Sous-total : ${subtotal}`,
             );
         });
 

@@ -14,7 +14,6 @@ type OrderForReport = {
   }[];
 };
 
-// Traduit le statut en français
 const translateStatus = (status: string): string => {
   const map: Record<string, string> = {
     PENDING: "EN ATTENTE",
@@ -31,7 +30,6 @@ export const excelService = {
     workbook.creator = "Stockwise";
     workbook.created = new Date();
 
-    // ─── Feuille 1 : Commandes détaillées ─────────────────────
     const sheet = workbook.addWorksheet("Commandes");
 
     sheet.columns = [
@@ -53,7 +51,7 @@ export const excelService = {
     headerRow.fill = {
       type: "pattern",
       pattern: "solid",
-      fgColor: { argb: "FFE6B800" }, // couleur primaire Stockwise
+      fgColor: { argb: "FFE6B800" },
     };
     headerRow.alignment = { vertical: "middle", horizontal: "center" };
     headerRow.height = 20;
@@ -76,14 +74,13 @@ export const excelService = {
           status: index === 0 ? translateStatus(order.status) : "",
         });
 
-        // Couleur selon statut
         if (index === 0) {
           const statusColor =
             order.status === "DELIVERED"
-              ? "FFD4EDDA" // vert clair
+              ? "FFD4EDDA"
               : order.status === "CANCELLED"
-                ? "FFF8D7DA" // rouge clair
-                : "FFFFF3CD"; // jaune clair
+                ? "FFF8D7DA"
+                : "FFFFF3CD";
 
           row.fill = {
             type: "pattern",
@@ -102,7 +99,6 @@ export const excelService = {
       });
     });
 
-    // ─── Feuille 2 : Résumé ────────────────────────────────────
     const summarySheet = workbook.addWorksheet("Résumé");
 
     const delivered = orders.filter((o) => o.status === "DELIVERED");

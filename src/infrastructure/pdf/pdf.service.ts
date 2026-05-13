@@ -14,10 +14,11 @@ type OrderForReport = {
   }[];
 };
 
-// ─── Helpers ───────────────────────────────────────────────────────────────
-
-const formatFCFA = (amount: number): string =>
-  `${Math.round(amount).toLocaleString("fr-FR")} FCFA`;
+const formatFCFA = (amount: number): string => {
+  const rounded = Math.round(amount);
+  const formatted = rounded.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+  return `${formatted} FCFA`;
+};
 
 const translateStatus = (status: string): string => {
   const map: Record<string, string> = {
@@ -31,8 +32,6 @@ const translateStatus = (status: string): string => {
 const formatDate = (date: Date): string =>
   new Date(date).toLocaleDateString("fr-FR");
 
-// ─── Service ───────────────────────────────────────────────────────────────
-
 export const pdfService = {
   async generateOrderReport(orders: OrderForReport[]): Promise<Buffer> {
     return new Promise((resolve, reject) => {
@@ -43,7 +42,6 @@ export const pdfService = {
       doc.on("end", () => resolve(Buffer.concat(chunks)));
       doc.on("error", reject);
 
-      // ─── En-tête ──────────────────────────────────────────────
       doc
         .fontSize(20)
         .font("Helvetica-Bold")
@@ -56,7 +54,6 @@ export const pdfService = {
 
       doc.moveDown(2);
 
-      // ─── Résumé ───────────────────────────────────────────────
       const delivered = orders.filter((o) => o.status === "DELIVERED");
       const pending = orders.filter((o) => o.status === "PENDING");
       const cancelled = orders.filter((o) => o.status === "CANCELLED");
@@ -90,7 +87,6 @@ export const pdfService = {
 
       doc.moveDown(2);
 
-      // ─── Détail des commandes ─────────────────────────────────
       doc.fontSize(12).font("Helvetica-Bold").text("Détail des commandes");
       doc.moveDown(1);
 
@@ -100,7 +96,6 @@ export const pdfService = {
           ? ` (${order.customer.whatsapp})`
           : "";
 
-        // En-tête commande
         doc
           .fontSize(11)
           .font("Helvetica-Bold")
@@ -115,7 +110,6 @@ export const pdfService = {
 
         doc.moveDown(0.5);
 
-        // Lignes produits
         order.orderItems.forEach((item) => {
           const name = item.product?.name ?? "Produit inconnu";
           const qty = item.quantity;
@@ -137,7 +131,6 @@ export const pdfService = {
 
         doc.moveDown(1);
 
-        // Séparateur
         if (index < orders.length - 1) {
           doc.moveTo(40, doc.y).lineTo(555, doc.y).stroke();
           doc.moveDown(1);

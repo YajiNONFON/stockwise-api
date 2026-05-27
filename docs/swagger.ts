@@ -1,4 +1,5 @@
 import swaggerJsdoc from "swagger-jsdoc";
+import { env } from "../src/shared/config/env";
 
 const options: swaggerJsdoc.Options = {
   definition: {
@@ -11,7 +12,7 @@ const options: swaggerJsdoc.Options = {
     },
     servers: [
       {
-        url: "https://stockwiseapi.onrender.com/api/v1",
+        url: `${env.backendUrl}/api/v1`,
         description: "Production server",
       },
       {

@@ -7,7 +7,7 @@ const options: swaggerJsdoc.Options = {
       title: "Stockwise API",
       version: "1.0.0",
       description:
-        "Order and inventory management API for WhatsApp sellers in francophone Africa",
+        "Order and inventory management API for WhatsApp sellers in francophone",
     },
     servers: [
       {

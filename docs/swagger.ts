@@ -13,7 +13,7 @@ const options: swaggerJsdoc.Options = {
     servers: [
       {
         url: `${env.backendUrl}/api/v1`,
-        description: "Production server",
+        description: "Production serverr",
       },
       {
         url: "http://localhost:5000/api/v1",

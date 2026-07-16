@@ -16,6 +16,7 @@ import "./infrastructure/oauth/facebook.strategy";
 import router from "./routes";
 import { healthCheck } from "./infrastructure/monitoring/health";
 import { rateLimitMiddleware } from "./shared/middlewares/rate-limit.middleware";
+import { whatsappRouter } from "./modules/whatsapp/whatsapp.routes";
 
 // ─── Security ────────────────────────────────────────────────────────────────
 app.use(helmet());
@@ -47,6 +48,9 @@ app.set("json replacer", (key: string, value: unknown) => {
 
 // ─── Swagger UI ───────────────────────────────────────────────────────────────
 app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+// ─── Webhook  ───────────────────────────────────────────────────────────────
+app.use("/webhook/whatsapp", whatsappRouter);
 
 // ─── Routes ──────────────────────────────────────────────────────────────────
 app.use("/api/v1", router);

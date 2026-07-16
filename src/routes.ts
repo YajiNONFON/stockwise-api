@@ -17,6 +17,5 @@ router.use("/products", productRouter);
 router.use("/orders", orderRouter);
 router.use("/dashboard", dashboardRouter);
 router.use("/reports", reportRouter);
-router.use("/webhook/whatsapp", whatsappRouter);
 
 export default router;

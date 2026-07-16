@@ -6,6 +6,7 @@ import { productRouter } from "./modules/products/products.routes";
 import { orderRouter } from "./modules/orders/orders.routes";
 import { dashboardRouter } from "./modules/dashboard/dashboard.routes";
 import { reportRouter } from "./modules/reports/reports.routes";
+import { whatsappRouter } from "./modules/whatsapp/whatsapp.routes";
 
 const router = Router();
 
@@ -16,5 +17,6 @@ router.use("/products", productRouter);
 router.use("/orders", orderRouter);
 router.use("/dashboard", dashboardRouter);
 router.use("/reports", reportRouter);
+router.use("/webhook/whatsapp", whatsappRouter);
 
 export default router;

@@ -1,5 +1,3 @@
-// src/modules/whatsapp/whatsapp.routes.ts
-
 import { Router } from "express";
 import { whatsappController } from "./whatsapp.controller";
 
@@ -18,9 +16,9 @@ export const whatsappRouter = Router();
  *   get:
  *     summary: Webhook verification by Meta
  *     description: >
- *       Called once by Meta when configuring the webhook in the Meta Developer
- *       Portal. Meta sends a challenge that the server returns as-is to prove
- *       it controls the URL.
+ *       Called once by Meta when configuring the webhook in the Meta
+ *       Developer Portal. Meta sends a challenge that the server returns
+ *       as-is to prove it controls the URL.
  *     tags: [Webhook]
  *     parameters:
  *       - in: query
@@ -56,3 +54,22 @@ export const whatsappRouter = Router();
  *         description: Incorrect verify token
  */
 whatsappRouter.get("/", whatsappController.verifyWebhook);
+
+/**
+ * @swagger
+ * /webhook/whatsapp:
+ *   post:
+ *     summary: Receive incoming WhatsApp messages
+ *     description: Called by Meta each time a message is received on the WhatsApp number.
+ *     tags: [Webhook]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *     responses:
+ *       200:
+ *         description: Message received and acknowledged
+ */
+whatsappRouter.post("/", whatsappController.receiveMessage);
